@@ -12,10 +12,11 @@ def logq_diag(z, mu, s2):
     return -0.5 * np.sum((z - mu) ** 2 / s2 + np.log(s2), 1) - 0.5 * z.shape[1] * LOG2PI
 
 def _logmeanexp(a):
-    a = a[np.isfinite(a)]
+    """log of the mean of exp(a) over ALL entries (entries equal to -inf contribute zero)."""
+    n = len(a); a = a[np.isfinite(a)]
     if len(a) == 0:
         return -np.inf
-    m = a.max(); return m + np.log(np.mean(np.exp(a - m)))
+    m = a.max(); return m + np.log(np.sum(np.exp(a - m)) / n)
 
 class Target:
     """logp(z): unnormalised log target in z-space; f(z): integrand values (or None for f = 1);
